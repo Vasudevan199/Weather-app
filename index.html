@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            background-image: url("set-vertical-background-of-weather-forecast-app-widgets-sunny-day-thunderstorm-rain-night-and-winter-snow-illustration-free-vector.png");
+            background-position: fixed;
+            background-repeat: no-repeat;
+        }
+
+        form {
+            margin: 50px auto;
+        }
+
+        .cityInput {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .card {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+            display: none;
+        }
+
+        .errordisplay {
+            color: red;
+            font-size: 16px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <form id="weatherForm">
+        <input type="text" class="cityInput" placeholder="Enter city" required>
+        <button type="submit">Get Weather</button>
+    </form>
+    <div class="card">
+        <h1 class="citydisplay">City Name</h1>
+        <p class="temp">Temperature</p>
+        <p class="humi">Humidity</p>
+        <p class="Des">Description</p>
+        <p class="weatherEmoji">Emoji</p>
+        <p class="errordisplay">Please enter a valid city!</p>
+    </div>
+    <script>
+        document.getElementById('weatherForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const city = document.querySelector('.cityInput').value;
+            const apiKey = '9893a559b6a494347b27f5331c89b183'; 
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.cod === 200) {
+                        document.querySelector('.card').style.display = 'block';
+                        document.querySelector('.citydisplay').textContent = data.name;
+                        document.querySelector('.temp').textContent = `${data.main.temp}°F`;
+                        document.querySelector('.humi').textContent = `Humidity: ${data.main.humidity}%`;
+                        document.querySelector('.Des').textContent = data.weather[0].description;
+                        document.querySelector('.weatherEmoji').textContent = getWeatherEmoji(data.weather[0].main);
+                        document.querySelector('.errordisplay').style.display = 'none';
+                    } else {
+                        document.querySelector('.card').style.display = 'none';
+                        document.querySelector('.errordisplay').textContent = "City not found!";
+                        document.querySelector('.errordisplay').style.display = 'block';
+                    }
+                })
+                .catch(() => {
+                    document.querySelector('.card').style.display = 'none';
+                    document.querySelector('.errordisplay').textContent = "An error occurred!";
+                    document.querySelector('.errordisplay').style.display = 'block';
+                });
+        });
+
+        function getWeatherEmoji(weather) {
+            switch(weather.toLowerCase()) {
+                case 'clear':
+                    return '☀️';
+                case 'clouds':
+                    return '☁️';
+                case 'rain':
+                    return '🌧️';
+                case 'snow':
+                    return '❄️';
+                case 'thunderstorm':
+                    return '⛈️';
+                case 'drizzle':
+                    return '🌦️';
+                default:
+                    return '🌈';
+            }
+        }
+    </script>
+</body>
+</html>
