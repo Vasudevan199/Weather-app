@@ -1,0 +1,20 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract WeatherData {
+    struct Weather {
+        uint256 temperature;
+        uint256 humidity;
+        address submittedBy;
+    }
+    
+    Weather[] public weatherRecords;
+
+    function submitWeather(uint256 _temperature, uint256 _humidity) public {
+        weatherRecords.push(Weather(_temperature, _humidity, msg.sender));
+    }
+
+    function getWeatherRecords() public view returns (Weather[] memory) {
+        return weatherRecords;
+    }
+}
